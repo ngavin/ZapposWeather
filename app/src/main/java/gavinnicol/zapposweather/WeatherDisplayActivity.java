@@ -17,9 +17,9 @@ import android.view.View;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import gavinnicol.zapposweather.util.SystemUiHider;
 
@@ -33,6 +33,8 @@ import gavinnicol.zapposweather.util.SystemUiHider;
 public class WeatherDisplayActivity extends Activity {
     private final String Tag = "ZapposWeather";
     private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
+    private String units = "imperial";
+
 
     private Location userLocation;
 
@@ -224,15 +226,88 @@ public class WeatherDisplayActivity extends Activity {
 
     private void getForecast() {
         String requestURI = getForecastURI();
-        HttpUriRequest request = new HttpGet(requestURI);
-        HttpResponse response = getHttpResponse(request);
+        JSONObject response = getJSONData(new HttpGet(requestURI));
+        if (response != null) createForecastData(response);
     }
 
     private void getCurrentConditions() {
         String requestURI = getCurrentConditonsURI();
-        HttpUriRequest request = new HttpGet(requestURI);
-        HttpResponse response = getHttpResponse(request);
-        //parse response
+        JSONObject response = getJSONData(new HttpGet(requestURI));
+        if (response != null) createCurrentConditionsData(response);
+    }
+
+    private void createForecastData(JSONObject response) {
+        String iconID;
+        double minTemp;
+        double maxTemp;
+        int dayOffset;
+        try {
+            JSONArray days = response.getJSONArray("list");
+            for (int i = 0; i < days.length(); ++i) {
+                JSONObject currentDay = (JSONObject) days.get(i);
+                iconID = getIconID(currentDay);
+                minTemp = getMinTemp(currentDay);
+                maxTemp = getMaxTemp(currentDay);
+            }
+        } catch (Exception e) {
+            Log.e(Tag, "Accessing data in JSON Object failed");
+        }
+    }
+
+    private double getMaxTemp(JSONObject currentDay) throws JSONException {
+        JSONObject temperatureObject = (JSONObject) currentDay.getJSONObject("temp");
+        return temperatureObject.getDouble("max");
+    }
+
+    private double getMinTemp(JSONObject currentDay) throws JSONException {
+        JSONObject temperatureObject = (JSONObject) currentDay.getJSONObject("temp");
+        return temperatureObject.getDouble("min");
+    }
+
+    private void createCurrentConditionsData(JSONObject response) {
+        String locationName;
+        String iconID;
+        double currentTemp;
+        try {
+            locationName = response.getString("name");
+            iconID = getIconID(response);
+            currentTemp = getCurrentTemp(response);
+        } catch (Exception e) {
+            Log.e(Tag, "Accessing data in JSON Object failed");
+        }
+    }
+
+    private double getCurrentTemp(JSONObject response) throws JSONException {
+        JSONObject currentTempObject = (JSONObject) response.get("main");
+        return currentTempObject.getDouble("temp");
+    }
+
+    /**
+     * Finds the icon ID of the current weather icon
+     *
+     * @param response "Weather" array must be at the top level
+     *
+     * @return String of the icon ID
+     *
+     * @throws JSONException
+     */
+    private String getIconID(JSONObject response) throws JSONException {
+        JSONArray weatherArray = (JSONArray) response.get("weather");
+        JSONObject weatherObject = (JSONObject) weatherArray.get(0);
+        return weatherObject.getString("icon");
+    }
+
+    /**
+     * Executes network request, parses response into JSON, and returns
+     *
+     * @param request API Request to execute
+     *
+     * @return JSON parsing of API response
+     */
+    private JSONObject getJSONData(HttpUriRequest request) {
+        HttpResponse httpResponse = getHttpResponse(request);
+        String stringResponse = extractResponse(httpResponse);
+        return parseStringToJSON(stringResponse);
     }
 
     /**
@@ -245,7 +320,8 @@ public class WeatherDisplayActivity extends Activity {
                 userLocation.getLatitude() +
                 "&lon=" +
                 userLocation.getLongitude() +
-                "&mode=json";
+                "&mode=json&units=" +
+                units;
     }
 
     /**
@@ -258,9 +334,9 @@ public class WeatherDisplayActivity extends Activity {
                 userLocation.getLatitude() +
                 "&lon=" +
                 userLocation.getLongitude() +
-                "&cnt=5&mode=json";
+                "&cnt=5&mode=json&units=" +
+                units;
     }
-
 
     /**
      * Retrieves response from OpenWeatherMap API
@@ -277,5 +353,39 @@ public class WeatherDisplayActivity extends Activity {
             e.printStackTrace();
         }
         return response;
+    }
+
+    /**
+     * Gets Json string from the stream contained in response
+     *
+     * @param response Http response containing the stream
+     *
+     * @return String representation of the Json
+     */
+    private String extractResponse(HttpResponse response) {
+        String jsonResponse = null;
+        try {
+            jsonResponse = new HttpResponseExtractor().execute(response).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * Parses JSONString into a JSONObject
+     *
+     * @param JSONString String representation of a JSON Object
+     *
+     * @return JSONObject of JSONString
+     */
+    private JSONObject parseStringToJSON(String JSONString) {
+        JSONObject JSONObject = null;
+        try {
+            JSONObject = new JSONObject(JSONString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return JSONObject;
     }
 }
