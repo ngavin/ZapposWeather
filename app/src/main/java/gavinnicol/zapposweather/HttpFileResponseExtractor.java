@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Extracts the HttpResponse stream into a String
+ * Extracts the HttpResponse stream into a Drawable
  */
 public class HttpFileResponseExtractor extends AsyncTask<HttpResponse, Void, Drawable> {
 
@@ -20,7 +20,6 @@ public class HttpFileResponseExtractor extends AsyncTask<HttpResponse, Void, Dra
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Drawable file = Drawable.createFromStream(fileStream, "file");
-        return file;
+        return Drawable.createFromStream(fileStream, "file");
     }
 }

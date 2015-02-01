@@ -38,6 +38,10 @@ public class WeatherDisplayActivity extends Activity {
     private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
     private String units = "imperial";
 
+    CurrentConditionsData currentConditions;
+
+    List<FutureConditionsDayData> forecast;
+
 
     private Location userLocation;
 
@@ -201,7 +205,7 @@ public class WeatherDisplayActivity extends Activity {
                 userLocation = location;
                 Intent intent = new Intent();
 
-                getWeatherUpdates();
+                getWeatherData();
 
                 intent.setAction("locationUpdate");
 
@@ -222,28 +226,34 @@ public class WeatherDisplayActivity extends Activity {
                 locationListener);
     }
 
-    private void getWeatherUpdates() {
-        getCurrentConditions();
-        getForecast();
+    private void getWeatherData() {
+        currentConditions = getCurrentConditions();
+        forecast = getForecast();
+        System.out.println("test");
     }
 
-    private void getForecast() {
+    private List<FutureConditionsDayData> getForecast() {
         String requestURI = getForecastURI();
         JSONObject response = getJSONData(new HttpGet(requestURI));
-        if (response != null) createForecastData(response);
+        List<FutureConditionsDayData> forecast = new ArrayList<>();
+        if (response != null) forecast = createForecastData(response);
+        else Log.w(Tag, "Response for forecast is null");
+        return forecast;
     }
 
-    private void getCurrentConditions() {
+    private CurrentConditionsData getCurrentConditions() {
         String requestURI = getCurrentConditonsURI();
         JSONObject response = getJSONData(new HttpGet(requestURI));
-        if (response != null) createCurrentConditionsData(response);
+        CurrentConditionsData currentConditions = null;
+        if (response != null) currentConditions = createCurrentConditionsData(response);
+        return currentConditions;
     }
 
     private List<FutureConditionsDayData> createForecastData(JSONObject response) {
         String iconID;
         double minTemp;
         double maxTemp;
-        List<FutureConditionsDayData> weekForcastData = new ArrayList<>();
+        List<FutureConditionsDayData> weekForecastData = new ArrayList<>();
         try {
             JSONArray days = response.getJSONArray("list");
             for (int i = 0; i < days.length(); ++i) {
@@ -253,13 +263,13 @@ public class WeatherDisplayActivity extends Activity {
                 maxTemp = getMaxTemp(currentDay);
                 FutureConditionsDayData dayData = new FutureConditionsDayData(iconID, minTemp,
                         maxTemp, i);
-                weekForcastData.add(dayData);
+                weekForecastData.add(dayData);
             }
         } catch (Exception e) {
             Log.e(Tag, "Accessing data in JSON Object failed");
             e.printStackTrace();
         }
-        return weekForcastData;
+        return weekForecastData;
     }
 
     private double getMaxTemp(JSONObject currentDay) throws JSONException {
@@ -272,17 +282,20 @@ public class WeatherDisplayActivity extends Activity {
         return temperatureObject.getDouble("min");
     }
 
-    private void createCurrentConditionsData(JSONObject response) {
+    private CurrentConditionsData createCurrentConditionsData(JSONObject response) {
         String locationName;
         String iconID;
         double currentTemp;
+        CurrentConditionsData currentConditionsData = null;
         try {
             locationName = response.getString("name");
             iconID = getIconID(response);
             currentTemp = getCurrentTemp(response);
+            currentConditionsData = new CurrentConditionsData(iconID, currentTemp, locationName);
         } catch (Exception e) {
             Log.e(Tag, "Accessing data in JSON Object failed");
         }
+        return currentConditionsData;
     }
 
     private double getCurrentTemp(JSONObject response) throws JSONException {
