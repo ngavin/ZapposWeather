@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ListView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -38,7 +39,7 @@ public class WeatherDisplayActivity extends Activity {
     private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
     private String units = "imperial";
 
-    CurrentConditionsData currentConditions;
+    List<CurrentConditionsData> currentConditions;
 
     List<FutureConditionsDayData> forecast;
 
@@ -88,6 +89,7 @@ public class WeatherDisplayActivity extends Activity {
         enableFullscreenSystemCalls();
 
         enableGPS();
+
     }
 
     /**
@@ -207,6 +209,14 @@ public class WeatherDisplayActivity extends Activity {
 
                 getWeatherData();
 
+                CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter
+                        (getApplicationContext(), R.layout.current_conditions_layout,
+                                currentConditions);
+
+                ListView currentConditionsView = (ListView) findViewById(R.id
+                        .current_conditions_list);
+                currentConditionsView.setAdapter(currentConditionsAdapter);
+
                 intent.setAction("locationUpdate");
 
                 sendBroadcast(intent);
@@ -241,12 +251,12 @@ public class WeatherDisplayActivity extends Activity {
         return forecast;
     }
 
-    private CurrentConditionsData getCurrentConditions() {
+    private List<CurrentConditionsData> getCurrentConditions() {
         String requestURI = getCurrentConditonsURI();
         JSONObject response = getJSONData(new HttpGet(requestURI));
-        CurrentConditionsData currentConditions = null;
-        if (response != null) currentConditions = createCurrentConditionsData(response);
-        return currentConditions;
+        List<CurrentConditionsData> currentCondition = new ArrayList<>();
+        if (response != null) currentCondition.add(createCurrentConditionsData(response));
+        return currentCondition;
     }
 
     private List<FutureConditionsDayData> createForecastData(JSONObject response) {
