@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -37,7 +38,11 @@ public class CurrentConditionsAdapter extends ArrayAdapter<CurrentConditionsData
 
         /*Sets data to view*/
         TextView locationNameView = (TextView) row.findViewById(R.id.locationName);
+        TextView currentTempView = (TextView) row.findViewById(R.id.currentTemp);
+        ImageView iconView = (ImageView) row.findViewById(R.id.currentConditionImage);
         locationNameView.setText(data.get(position).getLocationName());
+        currentTempView.setText("Current Temp:  " + data.get(position).getCurrentTemp());
+        iconView.setImageDrawable(data.get(position).getIcon());
 
         return row;
     }

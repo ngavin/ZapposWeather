@@ -23,7 +23,7 @@ public class CurrentConditionsData extends BaseData {
         return locationName;
     }
 
-    public double getCurrentTemp() {
-        return currentTemp;
+    public String getCurrentTemp() {
+        return Double.toString(currentTemp);
     }
 }
