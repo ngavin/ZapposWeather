@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 /**
  * Extracts the HttpResponse stream into a String
  */
-public class HttpResponseExtractor extends AsyncTask<HttpResponse, Void, String> {
+public class HttpJSONResponseExtractor extends AsyncTask<HttpResponse, Void, String> {
 
     public String doInBackground(HttpResponse... response) {
         InputStream jsonStream = null;

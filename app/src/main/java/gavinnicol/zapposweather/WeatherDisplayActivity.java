@@ -21,6 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gavinnicol.zapposweather.util.SystemUiHider;
 
 
@@ -236,11 +239,11 @@ public class WeatherDisplayActivity extends Activity {
         if (response != null) createCurrentConditionsData(response);
     }
 
-    private void createForecastData(JSONObject response) {
+    private List<FutureConditionsDayData> createForecastData(JSONObject response) {
         String iconID;
         double minTemp;
         double maxTemp;
-        int dayOffset;
+        List<FutureConditionsDayData> weekForcastData = new ArrayList<>();
         try {
             JSONArray days = response.getJSONArray("list");
             for (int i = 0; i < days.length(); ++i) {
@@ -248,10 +251,15 @@ public class WeatherDisplayActivity extends Activity {
                 iconID = getIconID(currentDay);
                 minTemp = getMinTemp(currentDay);
                 maxTemp = getMaxTemp(currentDay);
+                FutureConditionsDayData dayData = new FutureConditionsDayData(iconID, minTemp,
+                        maxTemp, i);
+                weekForcastData.add(dayData);
             }
         } catch (Exception e) {
             Log.e(Tag, "Accessing data in JSON Object failed");
+            e.printStackTrace();
         }
+        return weekForcastData;
     }
 
     private double getMaxTemp(JSONObject currentDay) throws JSONException {
@@ -306,7 +314,7 @@ public class WeatherDisplayActivity extends Activity {
      */
     private JSONObject getJSONData(HttpUriRequest request) {
         HttpResponse httpResponse = getHttpResponse(request);
-        String stringResponse = extractResponse(httpResponse);
+        String stringResponse = extractJSONResponse(httpResponse);
         return parseStringToJSON(stringResponse);
     }
 
@@ -362,10 +370,10 @@ public class WeatherDisplayActivity extends Activity {
      *
      * @return String representation of the Json
      */
-    private String extractResponse(HttpResponse response) {
+    private String extractJSONResponse(HttpResponse response) {
         String jsonResponse = null;
         try {
-            jsonResponse = new HttpResponseExtractor().execute(response).get();
+            jsonResponse = new HttpJSONResponseExtractor().execute(response).get();
         } catch (Exception e) {
             e.printStackTrace();
         }

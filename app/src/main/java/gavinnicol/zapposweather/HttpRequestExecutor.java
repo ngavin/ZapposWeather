@@ -24,6 +24,8 @@ public class HttpRequestExecutor extends AsyncTask<HttpUriRequest, Void, HttpRes
             response = client.execute(request[0]);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            client.close();
         }
         return response;
     }
