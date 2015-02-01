@@ -3,7 +3,6 @@ package gavinnicol.zapposweather;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -85,7 +84,6 @@ public class WeatherDisplayActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_weather_display);
-
         enableFullscreenSystemCalls();
 
         enableGPS();
@@ -205,21 +203,15 @@ public class WeatherDisplayActivity extends Activity {
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 userLocation = location;
-                Intent intent = new Intent();
 
                 getWeatherData();
 
-                CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter
-                        (getApplicationContext(), R.layout.current_conditions_layout,
-                                currentConditions);
+                CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter(getApplicationContext(), R.layout.current_conditions_layout, currentConditions);
 
-                ListView currentConditionsView = (ListView) findViewById(R.id
-                        .current_conditions_list);
+                ListView currentConditionsView = (ListView) findViewById(R.id.current_conditions_list);
                 currentConditionsView.setAdapter(currentConditionsAdapter);
 
-                intent.setAction("locationUpdate");
-
-                sendBroadcast(intent);
+                currentConditionsAdapter.notifyDataSetChanged();
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -239,7 +231,6 @@ public class WeatherDisplayActivity extends Activity {
     private void getWeatherData() {
         currentConditions = getCurrentConditions();
         forecast = getForecast();
-        System.out.println("test");
     }
 
     private List<FutureConditionsDayData> getForecast() {

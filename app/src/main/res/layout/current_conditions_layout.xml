@@ -14,23 +14,23 @@
         android:background="#ffcccccc"/>
 
     <TextView
-        android:id="@+id/listTitle"
+        android:id="@+id/locationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/currentConditionImage"
-        android:layout_toRightOf="@+id/currentConditionImage"
+        android:layout_toEndOf="@+id/currentConditionImage"
         android:text="A List item title"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/listDescription"
+        android:id="@+id/currentTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/listTitle"
+        android:layout_below="@+id/locationName"
         android:layout_marginTop="5dp"
         android:maxLines="4"
-        android:layout_toRightOf="@+id/listImage"
+        android:layout_toEndOf="@+id/currentConditionImage"
         android:text="The List item description"
         android:textSize="14sp"/>
 

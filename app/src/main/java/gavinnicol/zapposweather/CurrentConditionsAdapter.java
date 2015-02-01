@@ -1,11 +1,11 @@
 package gavinnicol.zapposweather;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -17,31 +17,27 @@ public class CurrentConditionsAdapter extends ArrayAdapter<CurrentConditionsData
 
     Context context;
     int layoutResourceId;
-    CurrentConditionsData data = null;
+    List<CurrentConditionsData> data;
 
-    public CurrentConditionsAdapter(Context context, int layoutResourceId,
-                                    List<CurrentConditionsData> data) {
+    public CurrentConditionsAdapter(Context context, int layoutResourceId, List<CurrentConditionsData> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
-        this.data = data.get(0);
+        this.data = data;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
 
-        if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        if (row == null) { /*Only inflate we if cannot recycle an old view*/
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(layoutResourceId, parent, false);
-            row.setTag(data);
-        }/* else {
-             (WeatherHolder) row.getTag();
-        }*/
+        }
 
-        /*Weather weather = data[position];
-        holder.txtTitle.setText(weather.title);
-        holder.imgIcon.setImageResource(weather.icon);*/
+        /*Sets data to view*/
+        TextView locationNameView = (TextView) row.findViewById(R.id.locationName);
+        locationNameView.setText(data.get(position).getLocationName());
 
         return row;
     }
