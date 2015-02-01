@@ -209,12 +209,8 @@ public class WeatherDisplayActivity extends Activity {
 
                 getWeatherData();
 
-                CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter(getApplicationContext(), R.layout.current_conditions_layout, currentConditions);
-
-                ListView currentConditionsView = (ListView) findViewById(R.id.current_conditions_list);
-                currentConditionsView.setAdapter(currentConditionsAdapter);
-
-                currentConditionsAdapter.notifyDataSetChanged();
+                enableCurrentConditionsAdapter();
+                enableForecastConditionsAdapter();
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -229,6 +225,24 @@ public class WeatherDisplayActivity extends Activity {
         };
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0,
                 locationListener);
+    }
+
+    private void enableForecastConditionsAdapter() {
+        ForecastAdapter forecastAdapter = new ForecastAdapter(getApplicationContext(), R.layout.forecast_row_layout, forecast);
+
+        ListView forecastView = (ListView) findViewById(R.id.forecast_list);
+        forecastView.setAdapter(forecastAdapter);
+
+        forecastAdapter.notifyDataSetChanged();
+    }
+
+    private void enableCurrentConditionsAdapter() {
+        CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter(getApplicationContext(), R.layout.current_conditions_layout, currentConditions);
+
+        ListView currentConditionsView = (ListView) findViewById(R.id.current_conditions_list);
+        currentConditionsView.setAdapter(currentConditionsAdapter);
+
+        currentConditionsAdapter.notifyDataSetChanged();
     }
 
     private void getWeatherData() {

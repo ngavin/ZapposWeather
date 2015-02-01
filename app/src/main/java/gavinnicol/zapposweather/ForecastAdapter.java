@@ -11,14 +11,14 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Dynamic data adapter for current conditions
+ * Created by Gavin on 2/1/2015.
  */
-public class CurrentConditionsAdapter extends ArrayAdapter<CurrentConditionsData> {
+public class ForecastAdapter extends ArrayAdapter<FutureConditionsDayData> {
     Context context;
     int layoutResourceId;
-    List<CurrentConditionsData> data;
+    List<FutureConditionsDayData> data;
 
-    public CurrentConditionsAdapter(Context context, int layoutResourceId, List<CurrentConditionsData> data) {
+    public ForecastAdapter(Context context, int layoutResourceId, List<FutureConditionsDayData> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -35,11 +35,13 @@ public class CurrentConditionsAdapter extends ArrayAdapter<CurrentConditionsData
         }
 
         /*Sets data to view*/
-        TextView locationNameView = (TextView) row.findViewById(R.id.locationName);
-        TextView currentTempView = (TextView) row.findViewById(R.id.currentTemp);
+        TextView dayView = (TextView) row.findViewById(R.id.day);
+        TextView minTempView = (TextView) row.findViewById(R.id.minTemp);
+        TextView maxTempView = (TextView) row.findViewById(R.id.maxTemp);
         ImageView iconView = (ImageView) row.findViewById(R.id.currentConditionImage);
-        locationNameView.setText(data.get(position).getLocationName());
-        currentTempView.setText("Current Temp:  " + data.get(position).getCurrentTemp());
+        dayView.setText(data.get(position).getDayName());
+        minTempView.setText("Min Temp:  " + data.get(position).getMinTemp());
+        maxTempView.setText("Max Temp:  " + data.get(position).getMaxTemp());
         iconView.setImageDrawable(data.get(position).getIcon());
 
         return row;
