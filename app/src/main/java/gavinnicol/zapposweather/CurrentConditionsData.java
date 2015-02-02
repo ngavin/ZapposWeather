@@ -1,5 +1,6 @@
 package gavinnicol.zapposweather;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -9,8 +10,8 @@ public class CurrentConditionsData extends BaseData {
     private String locationName;
     private double currentTemp;
 
-    public CurrentConditionsData(String iconID, double currentTemp, String locationName) {
-        setIcon(iconID);
+    public CurrentConditionsData(String iconID, double currentTemp, String locationName, Context context) {
+        setIcon(iconID, context);
         this.currentTemp = currentTemp;
         this.locationName = locationName;
     }

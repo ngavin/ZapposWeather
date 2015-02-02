@@ -228,21 +228,26 @@ public class WeatherDisplayActivity extends Activity {
     }
 
     private void enableForecastConditionsAdapter() {
-        ForecastAdapter forecastAdapter = new ForecastAdapter(getApplicationContext(), R.layout.forecast_row_layout, forecast);
+        if (!forecast.isEmpty()) {
+            ForecastAdapter forecastAdapter = new ForecastAdapter(getApplicationContext(), R.layout.forecast_row_layout, forecast);
 
-        ListView forecastView = (ListView) findViewById(R.id.forecast_list);
-        forecastView.setAdapter(forecastAdapter);
+            ListView forecastView = (ListView) findViewById(R.id.forecast_list);
+            forecastView.setAdapter(forecastAdapter);
 
-        forecastAdapter.notifyDataSetChanged();
+            forecastAdapter.notifyDataSetChanged();
+        }
     }
 
     private void enableCurrentConditionsAdapter() {
-        CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter(getApplicationContext(), R.layout.current_conditions_layout, currentConditions);
+        if (!currentConditions.isEmpty()) {
 
-        ListView currentConditionsView = (ListView) findViewById(R.id.current_conditions_list);
-        currentConditionsView.setAdapter(currentConditionsAdapter);
+            CurrentConditionsAdapter currentConditionsAdapter = new CurrentConditionsAdapter(getApplicationContext(), R.layout.current_conditions_layout, currentConditions);
 
-        currentConditionsAdapter.notifyDataSetChanged();
+            ListView currentConditionsView = (ListView) findViewById(R.id.current_conditions_list);
+            currentConditionsView.setAdapter(currentConditionsAdapter);
+
+            currentConditionsAdapter.notifyDataSetChanged();
+        }
     }
 
     private void getWeatherData() {
@@ -279,8 +284,7 @@ public class WeatherDisplayActivity extends Activity {
                 iconID = getIconID(currentDay);
                 minTemp = getMinTemp(currentDay);
                 maxTemp = getMaxTemp(currentDay);
-                FutureConditionsDayData dayData = new FutureConditionsDayData(iconID, minTemp,
-                        maxTemp, i);
+                FutureConditionsDayData dayData = new FutureConditionsDayData(iconID, minTemp, maxTemp, i, getApplicationContext());
                 weekForecastData.add(dayData);
             }
         } catch (Exception e) {
@@ -309,7 +313,7 @@ public class WeatherDisplayActivity extends Activity {
             locationName = response.getString("name");
             iconID = getIconID(response);
             currentTemp = getCurrentTemp(response);
-            currentConditionsData = new CurrentConditionsData(iconID, currentTemp, locationName);
+            currentConditionsData = new CurrentConditionsData(iconID, currentTemp, locationName, getApplicationContext());
         } catch (Exception e) {
             Log.e(Tag, "Accessing data in JSON Object failed");
         }

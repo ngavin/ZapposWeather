@@ -1,5 +1,6 @@
 package gavinnicol.zapposweather;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import java.text.SimpleDateFormat;
@@ -13,8 +14,8 @@ public class FutureConditionsDayData extends BaseData {
     private double maxTemp;
     private String dayName;
 
-    public FutureConditionsDayData(String iconID, double minTemp, double maxTemp, int dayOffset) {
-        setIcon(iconID);
+    public FutureConditionsDayData(String iconID, double minTemp, double maxTemp, int dayOffset, Context context) {
+        setIcon(iconID, context);
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
         Calendar c = Calendar.getInstance();

@@ -1,9 +1,10 @@
 package gavinnicol.zapposweather;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 
 /**
@@ -12,17 +13,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 public class BaseData {
     protected Drawable icon;
 
-    protected void setIcon(String iconID) {
-        String requestURI = getIconRequestURI(iconID);
-        HttpUriRequest httpRequest = new HttpGet(requestURI);
-        HttpResponse httpResponse = getHttpResponse(httpRequest);
-        Drawable icon = null;
-        try {
-            icon = new HttpFileResponseExtractor().execute(httpResponse).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.icon = icon;
+    protected void setIcon(String iconID, Context context) {
+        Resources resources = context.getResources();
+        int resourceID = resources.getIdentifier("i" + iconID, "drawable", context.getPackageName());
+        icon = resources.getDrawable(resourceID);
     }
 
     private String getIconRequestURI(String iconID) {
