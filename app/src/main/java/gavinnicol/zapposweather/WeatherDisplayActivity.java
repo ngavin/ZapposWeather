@@ -39,10 +39,6 @@ public class WeatherDisplayActivity extends Activity {
     private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
     private String units = "imperial";
 
-    List<CurrentConditionsData> currentConditions;
-
-    List<FutureConditionsDayData> forecast;
-
 
     private Location userLocation;
 
@@ -79,10 +75,14 @@ public class WeatherDisplayActivity extends Activity {
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+    private boolean first;
+    private List<BaseData> allData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        first = true;
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -206,9 +206,7 @@ public class WeatherDisplayActivity extends Activity {
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 userLocation = location;
-
                 getWeatherData();
-
                 enableWeatherAdapter();
             }
 
@@ -227,21 +225,29 @@ public class WeatherDisplayActivity extends Activity {
     }
 
     private void enableWeatherAdapter() {
-        List<BaseData> allData = new ArrayList<>();
-        allData.addAll(currentConditions);
-        allData.addAll(forecast);
-
         WeatherAdapter weatherAdapter = new WeatherAdapter(getApplicationContext(), R.layout.current_conditions_layout, R.layout.forecast_row_layout, allData);
 
         ListView weatherView = (ListView) findViewById(R.id.weather_list);
         weatherView.setAdapter(weatherAdapter);
 
         weatherAdapter.notifyDataSetChanged();
+
     }
 
     private void getWeatherData() {
+        List<CurrentConditionsData> currentConditions;
+        List<FutureConditionsDayData> forecast;
+
         currentConditions = getCurrentConditions();
         forecast = getForecast();
+
+        /*This is here because sometimes the response for the forecast is incomplete*/
+        if (first || !forecast.isEmpty()) {
+            first = false;
+            allData = new ArrayList<>();
+            allData.addAll(currentConditions);
+            allData.addAll(forecast);
+        }
     }
 
     private List<FutureConditionsDayData> getForecast() {
@@ -250,6 +256,7 @@ public class WeatherDisplayActivity extends Activity {
         List<FutureConditionsDayData> forecast = new ArrayList<>();
         if (response != null) forecast = createForecastData(response);
         else Log.w(Tag, "Response for forecast is null");
+
         return forecast;
     }
 
