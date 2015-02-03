@@ -19,7 +19,7 @@
         android:gravity="center"/>
 
     <ListView
-        android:id="@+id/current_conditions_list"
+        android:id="@+id/weather_list"
         android:fadingEdge="vertical"
         android:fadingEdgeLength="10dp"
         android:longClickable="true"
@@ -28,15 +28,6 @@
     </ListView>
     <!--android:listSelector="@drawable/list_selector_background"  Goes in above list view-->
 
-    <ListView
-        android:id="@+id/forecast_list"
-        android:fadingEdge="vertical"
-        android:fadingEdgeLength="10dp"
-        android:longClickable="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
-    <!--android:listSelector="@drawable/list_selector_background" Goes in above list view-->
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
