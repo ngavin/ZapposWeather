@@ -24,7 +24,7 @@
         android:fadingEdgeLength="10dp"
         android:longClickable="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
     </ListView>
     <!--android:listSelector="@drawable/list_selector_background"  Goes in above list view-->
 
@@ -34,9 +34,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:layout_gravity="right|center_vertical">
 
-        <LinearLayout
+    <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
             android:layout_width="match_parent"

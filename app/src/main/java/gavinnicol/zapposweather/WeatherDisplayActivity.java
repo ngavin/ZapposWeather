@@ -39,7 +39,6 @@ public class WeatherDisplayActivity extends Activity {
     private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
     private String units = "imperial";
 
-
     private Location userLocation;
 
     private Handler mHideHandler = new Handler();
@@ -58,7 +57,7 @@ public class WeatherDisplayActivity extends Activity {
      * Whether or not the system UI should be auto-hidden after {@link #AUTO_HIDE_DELAY_MILLIS}
      * milliseconds.
      */
-    private static final boolean AUTO_HIDE = true;
+    private static final boolean AUTO_HIDE = false;
 
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -70,11 +69,11 @@ public class WeatherDisplayActivity extends Activity {
      * If set, will toggle the system UI visibility upon interaction. Otherwise,
      * will show the system UI visibility upon interaction.
      */
-    private static final boolean TOGGLE_ON_CLICK = true;
+    private static final boolean TOGGLE_ON_CLICK = false;
     /**
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
-    private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+    private static final int HIDER_FLAGS = 0;
     private boolean first;
     private List<BaseData> allData;
 
@@ -83,14 +82,17 @@ public class WeatherDisplayActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         first = true;
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         setContentView(R.layout.activity_weather_display);
         enableFullscreenSystemCalls();
+    }
 
+    public void onResume() {
+        super.onResume();
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
         enableGPS();
-
     }
 
     /**
@@ -142,8 +144,10 @@ public class WeatherDisplayActivity extends Activity {
                     }
                 });
 
+        mSystemUiHider.hide();
+
         // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
+        /*contentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (TOGGLE_ON_CLICK) {
@@ -152,7 +156,7 @@ public class WeatherDisplayActivity extends Activity {
                     mSystemUiHider.show();
                 }
             }
-        });
+        });*/
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
