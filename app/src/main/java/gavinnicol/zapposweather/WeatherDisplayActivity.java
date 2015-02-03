@@ -8,9 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
@@ -29,52 +27,16 @@ import gavinnicol.zapposweather.util.SystemUiHider;
 
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
+ * Displays weather for your current location
  */
 public class WeatherDisplayActivity extends Activity {
     private final String Tag = "ZapposWeather";
-    private final String openWeatherMapAPIKey = "76b40e52ad7d4cd161158f7b43ee2fd1";
     private String units = "imperial";
 
     private Location userLocation;
 
-    private Handler mHideHandler = new Handler();
-
-    private Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mSystemUiHider.hide();
-        }
-    };
-
-    /** The instance of the {@link SystemUiHider} for this activity. */
-    private SystemUiHider mSystemUiHider;
-
-    /**
-     * Whether or not the system UI should be auto-hidden after {@link #AUTO_HIDE_DELAY_MILLIS}
-     * milliseconds.
-     */
-    private static final boolean AUTO_HIDE = false;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * If set, will toggle the system UI visibility upon interaction. Otherwise,
-     * will show the system UI visibility upon interaction.
-     */
-    private static final boolean TOGGLE_ON_CLICK = false;
-    /**
-     * The flags to pass to {@link SystemUiHider#getInstance}.
-     */
-    private static final int HIDER_FLAGS = 0;
     private boolean first;
+
     private List<BaseData> allData;
 
     @Override
@@ -89,6 +51,7 @@ public class WeatherDisplayActivity extends Activity {
 
     public void onResume() {
         super.onResume();
+
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -104,7 +67,7 @@ public class WeatherDisplayActivity extends Activity {
 
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
-        mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
+        SystemUiHider mSystemUiHider = SystemUiHider.getInstance(this, contentView, 0);
         mSystemUiHider.setup();
         mSystemUiHider
                 .setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
@@ -136,68 +99,10 @@ public class WeatherDisplayActivity extends Activity {
                             // controls.
                             controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
                         }
-
-                        if (visible && AUTO_HIDE) {
-                            // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                        }
                     }
                 });
 
         mSystemUiHider.hide();
-
-        // Set up the user interaction to manually show or hide the system UI.
-        /*contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
-            }
-        });*/
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        // NOTE: delete dummy_button
-        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-    }
-
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
-
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
     /**
@@ -295,12 +200,12 @@ public class WeatherDisplayActivity extends Activity {
     }
 
     private double getMaxTemp(JSONObject currentDay) throws JSONException {
-        JSONObject temperatureObject = (JSONObject) currentDay.getJSONObject("temp");
+        JSONObject temperatureObject = currentDay.getJSONObject("temp");
         return temperatureObject.getDouble("max");
     }
 
     private double getMinTemp(JSONObject currentDay) throws JSONException {
-        JSONObject temperatureObject = (JSONObject) currentDay.getJSONObject("temp");
+        JSONObject temperatureObject = currentDay.getJSONObject("temp");
         return temperatureObject.getDouble("min");
     }
 
