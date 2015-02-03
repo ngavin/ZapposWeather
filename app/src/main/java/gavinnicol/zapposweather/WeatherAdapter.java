@@ -17,17 +17,21 @@ public class WeatherAdapter extends ArrayAdapter<BaseData> {
     private static final int CURRENT_CONDITIONS = 0;
     private static final int FUTURE_CONDITIONS = 1;
     private static final int NUM_TYPES = 2;
+    private static final int FAHRENHEIT = 0;
+    private static final int CELSIUS = 1;
     private Context context;
     private int currentConditionsLayoutId;
     private int futureConditionsLayoutId;
+    private int units;
 
     List<BaseData> data;
 
-    public WeatherAdapter(Context context, int currentConditionsLayoutId, int futureConditionsLayoutId, List<BaseData> data) {
+    public WeatherAdapter(Context context, int currentConditionsLayoutId, int futureConditionsLayoutId, int units, List<BaseData> data) {
         super(context, currentConditionsLayoutId, futureConditionsLayoutId, data);
         this.currentConditionsLayoutId = currentConditionsLayoutId;
         this.futureConditionsLayoutId = futureConditionsLayoutId;
         this.context = context;
+        this.units = units;
         this.data = data;
     }
 
@@ -58,9 +62,26 @@ public class WeatherAdapter extends ArrayAdapter<BaseData> {
         ImageView iconView = (ImageView) row.findViewById(R.id.currentConditionImage);
 
         dayView.setText(futureConditionsDayData.getDayName());
-        minTempView.setText("Min Temp:  " + futureConditionsDayData.getMinTemp());
-        maxTempView.setText("Max Temp:  " + futureConditionsDayData.getMaxTemp());
+        minTempView.setText("Min Temp:  " + getMinTemp(futureConditionsDayData) + getUnitEnding());
+        maxTempView.setText("Max Temp:  " + getMaxTemp(futureConditionsDayData) + getUnitEnding());
         iconView.setImageDrawable(futureConditionsDayData.getIcon());
+    }
+
+    private String getMaxTemp(FutureConditionsDayData futureConditionsDayData) {
+        int tempInF = futureConditionsDayData.getMaxTemp();
+        if (units == FAHRENHEIT) return Integer.toString(tempInF);
+        else return toCelsius(tempInF);
+    }
+
+    private String getMinTemp(FutureConditionsDayData futureConditionsDayData) {
+        int tempInF = futureConditionsDayData.getMinTemp();
+        if (units == FAHRENHEIT) return Integer.toString(tempInF);
+        else return toCelsius(tempInF);
+    }
+
+    private String toCelsius(int tempInF) {
+        tempInF -= 32;
+        return Integer.toString((int) (tempInF * 5.0 / 9.0));
     }
 
     private void setCurrentConditionsData(View row, int position) {
@@ -71,12 +92,24 @@ public class WeatherAdapter extends ArrayAdapter<BaseData> {
         ImageView iconView = (ImageView) row.findViewById(R.id.currentConditionImage);
 
         locationNameView.setText(currentConditionsData.getLocationName());
-        currentTempView.setText("Current Temp:  " + currentConditionsData.getCurrentTemp());
+        currentTempView.setText("Current Temp:  " + getCurrentTemp(currentConditionsData) + getUnitEnding());
         iconView.setImageDrawable(currentConditionsData.getIcon());
+    }
+
+    private String getCurrentTemp(CurrentConditionsData currentConditionsData) {
+        int tempInF = currentConditionsData.getCurrentTemp();
+        if (units == FAHRENHEIT) return Integer.toString(tempInF);
+        else return toCelsius(tempInF);
     }
 
     public int getViewTypeCount() {
         return NUM_TYPES;
+    }
+
+    private String getUnitEnding() {
+        if (units == FAHRENHEIT) return "\u00b0 F";
+        else if (units == CELSIUS) return "\u00b0 C";
+        else return "";
     }
 
     /**
@@ -89,5 +122,10 @@ public class WeatherAdapter extends ArrayAdapter<BaseData> {
     public int getItemViewType(int position) {
         if (position == 0) return CURRENT_CONDITIONS;
         else return FUTURE_CONDITIONS;
+    }
+
+    public void switchUnits() {
+        if (units == FAHRENHEIT) units = CELSIUS;
+        else units = FAHRENHEIT;
     }
 }

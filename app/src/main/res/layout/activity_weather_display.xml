@@ -1,9 +1,16 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:orientation="vertical"
              android:background="#0099cc"
              tools:context=".WeatherDisplayActivity">
+
+    <Button
+        android:id="@+id/unit_switcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unit_switch"/>
 
     <ListView
         android:id="@+id/weather_list"
@@ -14,4 +21,4 @@
         android:layout_height="wrap_content">
     </ListView>
 
-</FrameLayout>
+</LinearLayout>

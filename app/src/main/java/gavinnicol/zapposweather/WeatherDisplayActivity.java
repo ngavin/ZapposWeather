@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.apache.http.HttpResponse;
@@ -26,11 +27,14 @@ import java.util.List;
  * Displays weather for your current location
  */
 public class WeatherDisplayActivity extends Activity {
+    private static final int FAHRENHEIT = 0;
+    private static final int CELSIUS = 1;
     private final String Tag = "ZapposWeather";
-    private String units = "imperial";
+    private int units = FAHRENHEIT;
     private Location userLocation;
     private boolean first;
     private List<BaseData> allData;
+    private WeatherAdapter weatherAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +43,16 @@ public class WeatherDisplayActivity extends Activity {
         first = true;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_weather_display);
+
+        Button unitSwitcher = (Button) findViewById(R.id.unit_switcher);
+        unitSwitcher.setOnClickListener(new UnitSwitcherListener());
+
+        /*settingsDrawerView = (ListView) findViewById(R.id.left_drawer);
+        settingsDrawerView.setAdapter(new SettingsDrawerAdapter(getApplicationContext(), R.id.drawer_layout));
+        settingsDrawerView.setOnItemClickListener(new SettingsDrawerListener());*/
     }
 
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
 
         View decorView = getWindow().getDecorView();
@@ -79,7 +90,7 @@ public class WeatherDisplayActivity extends Activity {
     }
 
     private void enableWeatherAdapter() {
-        WeatherAdapter weatherAdapter = new WeatherAdapter(getApplicationContext(), R.layout.current_conditions_layout, R.layout.forecast_row_layout, allData);
+        weatherAdapter = new WeatherAdapter(getApplicationContext(), R.layout.current_conditions_layout, R.layout.forecast_row_layout, units, allData);
 
         ListView weatherView = (ListView) findViewById(R.id.weather_list);
         weatherView.setAdapter(weatherAdapter);
@@ -213,8 +224,7 @@ public class WeatherDisplayActivity extends Activity {
                 userLocation.getLatitude() +
                 "&lon=" +
                 userLocation.getLongitude() +
-                "&mode=json&units=" +
-                units;
+                "&mode=json&units=imperial";
     }
 
     /**
@@ -227,8 +237,7 @@ public class WeatherDisplayActivity extends Activity {
                 userLocation.getLatitude() +
                 "&lon=" +
                 userLocation.getLongitude() +
-                "&cnt=5&mode=json&units=" +
-                units;
+                "&cnt=5&mode=json&units=imperial";
     }
 
     /**
@@ -280,5 +289,16 @@ public class WeatherDisplayActivity extends Activity {
             e.printStackTrace();
         }
         return JSONObject;
+    }
+
+    private class UnitSwitcherListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (units == FAHRENHEIT) units = CELSIUS;
+            else units = FAHRENHEIT;
+            weatherAdapter.switchUnits();
+            weatherAdapter.notifyDataSetChanged();
+        }
     }
 }

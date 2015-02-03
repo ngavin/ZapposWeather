@@ -27,12 +27,12 @@ public class FutureConditionsDayData extends BaseData {
         return icon;
     }
 
-    public String getMinTemp() {
-        return Integer.toString(minTemp);
+    public int getMinTemp() {
+        return minTemp;
     }
 
-    public String getMaxTemp() {
-        return Integer.toString(maxTemp);
+    public int getMaxTemp() {
+        return maxTemp;
     }
 
     public String getDayName() {

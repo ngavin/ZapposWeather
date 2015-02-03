@@ -24,7 +24,12 @@ public class CurrentConditionsData extends BaseData {
         return locationName;
     }
 
-    public String getCurrentTemp() {
-        return Integer.toString(currentTemp);
+    /**
+     * Temp is in F
+     *
+     * @return Temp in F
+     */
+    public int getCurrentTemp() {
+        return currentTemp;
     }
 }
