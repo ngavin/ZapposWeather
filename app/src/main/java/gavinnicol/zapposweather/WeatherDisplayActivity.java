@@ -179,8 +179,8 @@ public class WeatherDisplayActivity extends Activity {
 
     private List<FutureConditionsDayData> createForecastData(JSONObject response) {
         String iconID;
-        double minTemp;
-        double maxTemp;
+        int minTemp;
+        int maxTemp;
         List<FutureConditionsDayData> weekForecastData = new ArrayList<>();
         try {
             JSONArray days = response.getJSONArray("list");
@@ -199,20 +199,20 @@ public class WeatherDisplayActivity extends Activity {
         return weekForecastData;
     }
 
-    private double getMaxTemp(JSONObject currentDay) throws JSONException {
+    private int getMaxTemp(JSONObject currentDay) throws JSONException {
         JSONObject temperatureObject = currentDay.getJSONObject("temp");
-        return temperatureObject.getDouble("max");
+        return temperatureObject.getInt("max");
     }
 
-    private double getMinTemp(JSONObject currentDay) throws JSONException {
+    private int getMinTemp(JSONObject currentDay) throws JSONException {
         JSONObject temperatureObject = currentDay.getJSONObject("temp");
-        return temperatureObject.getDouble("min");
+        return temperatureObject.getInt("min");
     }
 
     private CurrentConditionsData createCurrentConditionsData(JSONObject response) {
         String locationName;
         String iconID;
-        double currentTemp;
+        int currentTemp;
         CurrentConditionsData currentConditionsData = null;
         try {
             locationName = response.getString("name");
@@ -225,9 +225,9 @@ public class WeatherDisplayActivity extends Activity {
         return currentConditionsData;
     }
 
-    private double getCurrentTemp(JSONObject response) throws JSONException {
+    private int getCurrentTemp(JSONObject response) throws JSONException {
         JSONObject currentTempObject = (JSONObject) response.get("main");
-        return currentTempObject.getDouble("temp");
+        return currentTempObject.getInt("temp");
     }
 
     /**

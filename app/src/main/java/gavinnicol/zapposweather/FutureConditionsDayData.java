@@ -10,11 +10,11 @@ import java.util.Calendar;
  * Contains data required by the UI to display a day of the weekly forecast
  */
 public class FutureConditionsDayData extends BaseData {
-    private double minTemp;
-    private double maxTemp;
+    private int minTemp;
+    private int maxTemp;
     private String dayName;
 
-    public FutureConditionsDayData(String iconID, double minTemp, double maxTemp, int dayOffset, Context context) {
+    public FutureConditionsDayData(String iconID, int minTemp, int maxTemp, int dayOffset, Context context) {
         setIcon(iconID, context);
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
@@ -28,11 +28,11 @@ public class FutureConditionsDayData extends BaseData {
     }
 
     public String getMinTemp() {
-        return Double.toString(minTemp);
+        return Integer.toString(minTemp);
     }
 
     public String getMaxTemp() {
-        return Double.toString(maxTemp);
+        return Integer.toString(maxTemp);
     }
 
     public String getDayName() {

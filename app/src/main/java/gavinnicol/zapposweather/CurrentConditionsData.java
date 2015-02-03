@@ -8,9 +8,9 @@ import android.graphics.drawable.Drawable;
  */
 public class CurrentConditionsData extends BaseData {
     private String locationName;
-    private double currentTemp;
+    private int currentTemp;
 
-    public CurrentConditionsData(String iconID, double currentTemp, String locationName, Context context) {
+    public CurrentConditionsData(String iconID, int currentTemp, String locationName, Context context) {
         setIcon(iconID, context);
         this.currentTemp = currentTemp;
         this.locationName = locationName;
@@ -25,6 +25,6 @@ public class CurrentConditionsData extends BaseData {
     }
 
     public String getCurrentTemp() {
-        return Double.toString(currentTemp);
+        return Integer.toString(currentTemp);
     }
 }
