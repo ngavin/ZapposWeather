@@ -20,8 +20,9 @@
         android:layout_alignTop="@+id/currentConditionImage"
         android:layout_toEndOf="@+id/currentConditionImage"
         android:text="@string/no_data"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/currentTemp"
@@ -32,6 +33,7 @@
         android:maxLines="4"
         android:layout_toEndOf="@+id/currentConditionImage"
         android:text="@string/no_data"
-        android:textSize="14sp"/>
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"/>
 
 </RelativeLayout>
