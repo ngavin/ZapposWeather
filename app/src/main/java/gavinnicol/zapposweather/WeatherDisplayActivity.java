@@ -2,6 +2,7 @@ package gavinnicol.zapposweather;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -35,6 +37,7 @@ public class WeatherDisplayActivity extends Activity {
     private boolean first;
     private List<BaseData> allData;
     private WeatherAdapter weatherAdapter;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +47,22 @@ public class WeatherDisplayActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_weather_display);
 
+        locationManager = (LocationManager) this.getSystemService(Context
+                .LOCATION_SERVICE);
+
         Button unitSwitcher = (Button) findViewById(R.id.unit_switcher);
         unitSwitcher.setOnClickListener(new UnitSwitcherListener());
 
-        /*settingsDrawerView = (ListView) findViewById(R.id.left_drawer);
-        settingsDrawerView.setAdapter(new SettingsDrawerAdapter(getApplicationContext(), R.id.drawer_layout));
-        settingsDrawerView.setOnItemClickListener(new SettingsDrawerListener());*/
+        Button enableGPSButton = (Button) findViewById(R.id.enable_gps_button);
+        enableGPSButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 100);
+            }
+        });
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) showGPSPrompt();
     }
 
     protected void onResume() {
@@ -65,8 +78,6 @@ public class WeatherDisplayActivity extends Activity {
      * Enables the GPS and requests location updates
      */
     private void enableGPS() {
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context
-                .LOCATION_SERVICE);
 
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -79,14 +90,26 @@ public class WeatherDisplayActivity extends Activity {
             }
 
             public void onProviderEnabled(String provider) {
+                hideGPSPrompt();
             }
 
             public void onProviderDisabled(String provider) {
+                showGPSPrompt();
 
             }
         };
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0,
                 locationListener);
+    }
+
+    private void showGPSPrompt() {
+        RelativeLayout enableGPSScreen = (RelativeLayout) findViewById(R.id.enable_gps_overlay);
+        enableGPSScreen.setVisibility(View.VISIBLE);
+    }
+
+    private void hideGPSPrompt() {
+        RelativeLayout enableGPSScreen = (RelativeLayout) findViewById(R.id.enable_gps_overlay);
+        enableGPSScreen.setVisibility(View.GONE);
     }
 
     private void enableWeatherAdapter() {

@@ -4,5 +4,6 @@
     <string name="app_name">ZapposWeather</string>
     <string name="no_data">Waiting for data</string>
     <string name="unit_switch">Switch Units</string>
+    <string name="enable_gps">Enable GPS</string>
 
 </resources>
